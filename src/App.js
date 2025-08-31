@@ -9,6 +9,7 @@ function App() {
   const [stickRotation, setStickRotation] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseX, setLastMouseX] = useState(0);
+  const [lastTouchX, setLastTouchX] = useState(0);
   const semicircleRef = useRef(null);
   
   const categories = [
@@ -106,6 +107,14 @@ function App() {
     }
   };
 
+  const handleTouchStart = (e) => {
+    if (gameMode === 'guessing') {
+      e.preventDefault(); // Prevenir scroll en móviles
+      setIsDragging(true);
+      setLastTouchX(e.touches[0].clientX);
+    }
+  };
+
   const handleMouseMove = useCallback((e) => {
     if (isDragging && gameMode === 'guessing') {
       const deltaX = e.clientX - lastMouseX;
@@ -118,21 +127,46 @@ function App() {
       
       setLastMouseX(e.clientX);
     }
-  }, [isDragging, lastMouseX, gameMode]); 
+  }, [isDragging, lastMouseX, gameMode]);
+
+  const handleTouchMove = useCallback((e) => {
+    if (isDragging && gameMode === 'guessing') {
+      e.preventDefault(); // Prevenir scroll en móviles
+      const deltaX = e.touches[0].clientX - lastTouchX;
+      const sensitivity = 0.5;
+      
+      setStickRotation(prev => {
+        const newRotation = prev + deltaX * sensitivity;
+        return Math.max(-90, Math.min(90, newRotation));
+      });
+      
+      setLastTouchX(e.touches[0].clientX);
+    }
+  }, [isDragging, lastTouchX, gameMode]);
+
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
   }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
   useEffect(() => {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
       
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleTouchEnd);
       };
     }
-  }, [isDragging, lastMouseX, gameMode,handleMouseMove,handleMouseUp]);
+  }, [isDragging, lastMouseX, lastTouchX, gameMode, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
 
   const checkGuess = () => {
     const stickPosition = rotationToPosition(stickRotation);
@@ -205,6 +239,7 @@ function App() {
                   transformOrigin: 'center bottom'
                 }}
                 onMouseDown={handleMouseDown}
+                onTouchStart={handleTouchStart}
               />
             )}
           </div>
