@@ -245,6 +245,33 @@ function App() {
           </div>
         </div>
         
+        {/* Números de referencia alrededor del semicírculo */}
+        <div className="reference-numbers">
+          {Array.from({ length: 41 }, (_, i) => {
+            // Calcular posición en el semicírculo (0 a 180 grados)
+            const angle = (i / 40) * 180; // 0 a 180 grados
+            const radius = 34.3; // Radio del semicírculo en vw
+            
+            // Convertir ángulo a coordenadas cartesianas
+            // Ajustar para que 0° esté a la izquierda y 180° a la derecha
+            const x = Math.cos((angle - 180) * Math.PI / 180) * radius;
+            const y = Math.sin((angle - 180) * Math.PI / 180) * radius;
+            
+            return (
+              <div 
+                key={i} 
+                className="number"
+                style={{
+                  left: `calc(50% + ${x}vw)`,
+                  top: `calc(65% + ${y}vw)`
+                }}
+              >
+                {i}
+              </div>
+            );
+          })}
+        </div>
+
         {/* Controles del juego */}
         <div className="controls">
           <button className="control-btn" onClick={changeCategory}>
