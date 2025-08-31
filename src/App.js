@@ -275,15 +275,7 @@ function App() {
           </div>
         )}
         
-        {/* Información del juego */}
-        <div className="game-info">
-          <p>Zona actual: {zonePosition}%</p>
-          <p>Posición: {zonePosition <= 25 ? 'Izquierda' : zonePosition >= 75 ? 'Derecha' : 'Centro'}</p>
-          {gameMode === 'guessing' && (
-            <p>Palito en: {Math.round(rotationToPosition(stickRotation))}%</p>
-          )}
-          <p>Modo: {gameMode === 'setup' ? 'Configuración' : gameMode === 'playing' ? 'Jugando' : 'Adivinando'}</p>
-        </div>
+       
       </div>
     </div>
   );
