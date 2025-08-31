@@ -106,10 +106,10 @@ function App() {
     }
   };
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = useCallback((e) => {
     if (isDragging && gameMode === 'guessing') {
       const deltaX = e.clientX - lastMouseX;
-      const sensitivity = 0.5; // Sensibilidad del movimiento
+      const sensitivity = 0.5;
       
       setStickRotation(prev => {
         const newRotation = prev + deltaX * sensitivity;
@@ -118,12 +118,10 @@ function App() {
       
       setLastMouseX(e.clientX);
     }
-  };
-
-  const handleMouseUp = () => {
+  }, [isDragging, lastMouseX, gameMode]); 
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  };
-
+  }, []);
   useEffect(() => {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
