@@ -134,7 +134,7 @@ function App() {
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, lastMouseX, gameMode]);
+  }, [isDragging, lastMouseX, gameMode,handleMouseMove,handleMouseUp]);
 
   const checkGuess = () => {
     const stickPosition = rotationToPosition(stickRotation);
